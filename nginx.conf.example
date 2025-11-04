@@ -1,0 +1,79 @@
+# nginx.conf.example
+#
+# 这是 Nginx 服务器的配置示例。
+# 您需要将其调整并包含在您的 Nginx 配置中 (例如 /etc/nginx/sites-available/your-site.conf)
+#
+# 假设您将项目文件放在 /var/www/burn-after-reading
+
+server {
+    listen 80;
+    
+    # 将 your-domain.com 替换为您的域名
+    server_name your-domain.com;
+    
+    # 替换为您的项目根目录
+    root /var/www/burn-after-reading;
+    index index.php;
+
+    # 根目录的默认配置
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # 将 PHP 脚本传递给 FastCGI 服务器 (PHP-FPM)
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        
+        # 确保将此路径替换为您的 PHP-FPM socket
+        # 可能是 /var/run/php/php8.1-fpm.sock 或 127.0.0.1:9000
+        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+    }
+
+    # -----------------------------------------------------------------
+    # 保护敏感文件
+    # -----------------------------------------------------------------
+    # 阻止访问以下文件
+    location ~* (config\.php|messages\.db.*|php_errors\.log|\.gitignore|README\.md|check_requirements\.php)$ {
+        deny all;
+        return 404;
+    }
+    
+    # 阻止访问 .htaccess
+    location ~ /\.ht {
+        deny all;
+        return 404;
+    }
+}
+
+# -----------------------------------------------------------------
+# (强烈推荐) HTTPS/SSL 配置
+# -----------------------------------------------------------------
+#
+# 您应该使用 Certbot (https://certbot.eff.org/) 来获取免费的 SSL 证书
+# 并自动配置 Nginx。
+#
+# 运行 `sudo certbot --nginx` 后，您的配置将自动更新，
+# 类似于：
+#
+# server {
+#     listen 443 ssl http2;
+#     server_name your-domain.com;
+#
+#     root /var/www/burn-after-reading;
+#     index index.php;
+#
+#     # (Certbot 自动添加的 SSL 配置)
+#     ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+#     include /etc/letsencrypt/options-ssl-nginx.conf;
+#     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+#
+#     # (其余 location 配置与上面相同...)
+#
+#     location / { ... }
+#     location ~ \.php$ { ... }
+#     location ~* (config\.php|...) { deny all; return 404; }
+# }
+#
+# (Certbot 还会自动添加从 80 到 443 的重定向)
+#
