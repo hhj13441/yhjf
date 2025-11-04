@@ -1,0 +1,14 @@
+# 忽略配置文件 (包含密钥!)
+/config.php
+
+# 忽略 SQLite 数据库文件
+/messages.db
+/messages.db-journal
+
+# 忽略 PHP 错误日志
+/php_errors.log
+
+# 忽略 IDE 和操作系统文件
+.idea/
+.vscode/
+*.DS_Store
