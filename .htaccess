@@ -1,0 +1,37 @@
+# .htaccess
+# 
+# -----------------------------------------------------------------
+# 保护敏感文件
+# -----------------------------------------------------------------
+# 阻止 Web 访问以下文件和目录
+# - config.php (包含密钥)
+# - messages.db (数据库)
+# - php_errors.log (错误日志)
+# - .git (Git 仓库)
+# - .gitignore (Git 配置)
+# - README.md (文档)
+# - check_requirements.php (环境检查脚本)
+#
+<FilesMatch "^(config\.php|messages\.db.*|php_errors\.log|\.gitignore|README\.md|check_requirements\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# -----------------------------------------------------------------
+# 默认索引
+# -----------------------------------------------------------------
+# 确保访问目录时加载 index.php
+DirectoryIndex index.php
+
+# -----------------------------------------------------------------
+# (可选) 强制 HTTPS
+# -----------------------------------------------------------------
+# 
+# 如果您的服务器支持 HTTPS (强烈推荐!)，
+# 取消以下行的注释可以自动将所有 HTTP 请求重定向到 HTTPS。
+#
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
